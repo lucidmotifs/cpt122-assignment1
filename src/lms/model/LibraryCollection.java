@@ -34,9 +34,6 @@ public class LibraryCollection {
 			// add the new holding
 			this.holdings.put(h.code, h);
 			
-			// debug
-			System.out.println(h.code);
-			
 			return this.holdings.containsKey(h.code);
 		}
 	}
@@ -56,14 +53,19 @@ public class LibraryCollection {
 	
 	
 	/* Convenience method to get holdings as Array */
-	public Holding[] getAllHoldings() {		
+	public Holding[] getAllHoldings() {
+		// return null immediately if there are no holdings
+		if (this.holdings.isEmpty()) {
+			return null;
+		}
+		
 		// fetch the collection - use generic.
 		Collection<Holding> c = this.holdings.values();
-		
+				
 		Holding[] holdings_ = (c.toArray(new Holding[c.size()]));
 		
-		// Need to get an ordered list of keys first. Then using those keys create a
-		// generic collection of holdings.
+		// Will sort by Holding.code - see Holding.compareTo
+		Arrays.sort(holdings_);
 		
 		return holdings_;
 	}
@@ -75,9 +77,19 @@ public class LibraryCollection {
 		// iterate holding IDs
 		if (!this.holdings.isEmpty()) {
 			String idString = ":";
-			for (Integer i: this.holdings.keySet()) {
+			
+			// declare a Integer Array to hold the keys
+			int sizeOf = this.holdings.keySet().size();
+			Integer[] keys_ = this.holdings.keySet().toArray(new Integer[sizeOf]);
+			
+			// sort the array ascending
+			Arrays.sort(keys_);
+			
+			// for each key, add it to the end of the string
+			for (int i: keys_) {
 				idString = String.format("%s%d,", idString, i);
 			}
+			
 			// remove trailing comma
 			idString = idString.substring(0, idString.length()-1);
 			
